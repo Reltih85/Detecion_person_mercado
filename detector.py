@@ -113,8 +113,28 @@ class Detector:
                     self.arrival_times[tid] = datetime.now().time()
             else:
                 if tid in self.arrival_times and tid not in self.departure_times:
+                    # Registrar la hora de salida
                     self.departure_times[tid] = datetime.now().time()
+
+                    # Calcular la duración (intervalo)
+                    entrada = datetime.combine(datetime.today(), self.arrival_times[tid])
+                    salida = datetime.combine(datetime.today(), self.departure_times[tid])
+                    duration = salida - entrada
+
+                    # Convertir la duración a un formato legible (horas: minutos: segundos)
+                    interval = str(duration).split('.')[0]  # Esto elimina los microsegundos y te deja solo horas, minutos, segundos
+
+                    # Guardar en la base de datos con la duración calculada
                     self.save_to_db("zona_roja", (tid, self.arrival_times.pop(tid), self.departure_times[tid]))
+
+                    # Agregar el log correspondiente con el intervalo
+                    self.logger.add_log(
+                        zone='Zona Roja',
+                        person_id=tid,
+                        timestamp=self.departure_times[tid].strftime("%H:%M:%S"),  # Aquí se asegura que solo horas, minutos y segundos
+                        interval=interval  # Intervalo sin microsegundos
+                    )
+
 
             # Zona Verde (Servicio)
             if is_inside_zone((xc, yc), zones['service']):
@@ -122,9 +142,32 @@ class Detector:
                     self.service_start_times[tid] = datetime.now().time()
             else:
                 if tid in self.service_start_times and tid not in self.service_end_times:
+                    entrada = self.service_start_times[tid]
                     self.service_end_times[tid] = datetime.now().time()
-                    service_duration = str(datetime.now() - datetime.combine(datetime.today(), self.service_start_times.pop(tid)))
-                    self.save_to_db("zona_verde", (tid, self.service_start_times.get(tid), service_duration, self.service_end_times[tid]))
+
+                    # Calcular la duración (intervalo)
+                    entrada_datetime = datetime.combine(datetime.today(), entrada)
+                    salida_datetime = datetime.combine(datetime.today(), self.service_end_times[tid])
+                    duration = salida_datetime - entrada_datetime
+
+                    # Convertir la duración a un formato legible (horas: minutos: segundos)
+                    service_duration = str(duration).split('.')[0]  # Eliminar los microsegundos
+
+                    # Guardar en la base de datos con la duración calculada
+                    self.save_to_db("zona_verde", (tid, entrada, service_duration, self.service_end_times[tid]))
+
+                    # Agregar el log correspondiente con el intervalo
+                    self.logger.add_log(
+                        zone='Zona Verde',
+                        person_id=tid,
+                        timestamp=self.service_end_times[tid].strftime("%H:%M:%S"),  # Aquí se asegura que solo horas, minutos y segundos
+                        interval=service_duration  # Intervalo sin microsegundos
+                    )
+
+                    # Eliminar la hora de entrada después de usarla
+                    self.service_start_times.pop(tid)
+
+
 
         self.logger.display_logs(frame)
         return frame

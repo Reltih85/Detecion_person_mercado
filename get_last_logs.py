@@ -1,4 +1,5 @@
 import csv
+import cv2
 
 class Logger:
     def __init__(self):

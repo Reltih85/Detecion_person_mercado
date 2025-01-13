@@ -1,0 +1,14 @@
+# Ignorar el directorio __pycache__
+__pycache__/
+
+# Ignorar el entorno virtual .venv/
+.venv/
+
+# Ignorar el directorio 'data' (que contiene archivos de datos, como videos o imágenes)
+data/
+
+# Ignorar el archivo de requerimientos (requirements.txt)
+Requerimientos.txt
+
+# Ignorar el archivo de modelo de YOLOv5
+yolo5n.pt

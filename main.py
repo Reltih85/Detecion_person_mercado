@@ -4,7 +4,7 @@ from helpers import draw_zones
 from detector import Detector
 
 def main():
-    detector = Detector()  # Inicializa el detector con la lógica de detección.
+    detector = Detector()  # Inicializa el detector con la lógica de detección.mys
     cap = cv2.VideoCapture("data/persons.mp4")  # Carga el video de entrada.
 
     try:

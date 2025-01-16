@@ -1,8 +1,15 @@
 # Ignorar el directorio __pycache__
 __pycache__/
 
-# Ignorar el entorno virtual .venv/
+# Ignorar el entorno virtual
 .venv/
 
-# Ignorar el archivo de modelo de YOLOv5
+# Ignorar archivos de datos
+data/
+
+# Ignorar modelos pesados
 yolo5n.pt
+
+# Ignorar archivos temporales o de logs
+*.log
+*.tmp
